@@ -1,4 +1,4 @@
-package main
+package controllers
 
 import (
 	"encoding/json"
@@ -6,20 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	dbs "../dbs"
+	models "../models"
 )
-
-// Generic routes handlers
-
-// HealthCheck handler for /healthcheck
-func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	err := json.NewEncoder(w).Encode("All systems reporting at 100%")
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 // User routes handlers
 
@@ -28,7 +18,7 @@ func UserIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	err := json.NewEncoder(w).Encode(users)
+	err := json.NewEncoder(w).Encode(dbs.UsersRepo)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +26,7 @@ func UserIndex(w http.ResponseWriter, r *http.Request) {
 
 // UserCreate handler for user/ - POST
 func UserCreate(w http.ResponseWriter, r *http.Request) {
-	var user User
+	var user models.User
 
 	// Extract JSON payload
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
@@ -58,7 +48,7 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the new user
-	u := RepoCreateUser(user)
+	u := dbs.RepoCreateUser(user)
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(u)

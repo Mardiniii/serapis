@@ -1,16 +1,8 @@
-package main
+package routes
 
 import (
-	"net/http"
+	controller "../controllers"
 )
-
-// Route struct
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
-}
 
 // Routes collection
 type Routes []Route
@@ -20,18 +12,18 @@ var routes = Routes{
 		Name:        "HealthCheck",
 		Method:      "GET",
 		Pattern:     "/healthcheck",
-		HandlerFunc: HealthCheck,
+		HandlerFunc: controller.HealthCheck,
 	},
 	Route{
 		Name:        "Index Users",
 		Method:      "GET",
 		Pattern:     "/users",
-		HandlerFunc: UserIndex,
+		HandlerFunc: controller.UserIndex,
 	},
 	Route{
 		Name:        "Create User",
 		Method:      "POST",
 		Pattern:     "/users",
-		HandlerFunc: UserCreate,
+		HandlerFunc: controller.UserCreate,
 	},
 }
