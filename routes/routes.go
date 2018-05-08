@@ -18,13 +18,13 @@ var routes = Routes{
 		Name:        "Index Users",
 		Method:      "GET",
 		Pattern:     "/api/users",
-		HandlerFunc: controllers.UserIndex,
+		HandlerFunc: controllers.GetUsers,
 	},
 	Route{
 		Name:        "Create User",
 		Method:      "POST",
 		Pattern:     "/api/users",
-		HandlerFunc: controllers.UserCreate,
+		HandlerFunc: controllers.CreateUser,
 	},
 	Route{
 		Name:        "Get API Key",
@@ -35,7 +35,7 @@ var routes = Routes{
 	Route{
 		Name:        "Evaluation",
 		Method:      "POST",
-		Pattern:     "/api/eval/:platform",
+		Pattern:     "/api/evaluations/{platform}",
 		HandlerFunc: controllers.CreateEvaluation,
 	},
 }

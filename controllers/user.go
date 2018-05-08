@@ -12,13 +12,13 @@ import (
 
 // User routes handlers
 
-// UserIndex handler for /users
-func UserIndex(w http.ResponseWriter, r *http.Request) {
+// GetUsers handler for /users
+func GetUsers(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, dbs.UsersRepo)
 }
 
-// UserCreate handler for user/ - POST
-func UserCreate(w http.ResponseWriter, r *http.Request) {
+// CreateUser handler for user/ - POST
+func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
 	// Extract JSON payload
