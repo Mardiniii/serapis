@@ -5,14 +5,21 @@ import (
 	"net/http"
 
 	dbs "github.com/Mardiniii/serapis_api/dbs"
+	middlewares "github.com/Mardiniii/serapis_api/middlewares"
 	routes "github.com/Mardiniii/serapis_api/routes"
+	"github.com/urfave/negroni"
 )
 
 func main() {
 	var router = routes.Router()
 
-	println("Starting server on port: 8080")
+	n := negroni.New()
+	n.Use(negroni.HandlerFunc(middlewares.Logger))
+	n.UseHandler(router)
+
+	println("Creating seed data")
 	dbs.RepoSeedData()
-	println("Seed data created")
-	log.Fatal(http.ListenAndServe(":8080", router))
+
+	println("Starting server on port: 8080")
+	log.Fatal(http.ListenAndServe(":8080", n))
 }

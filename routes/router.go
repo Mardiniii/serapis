@@ -1,11 +1,7 @@
 package routes
 
 import (
-	"net/http"
-
 	"github.com/gorilla/mux"
-
-	middlewares "github.com/Mardiniii/serapis_api/middlewares"
 )
 
 // Router returns a new router with all the routes
@@ -13,15 +9,11 @@ func Router() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 
 	for _, route := range routes {
-		var handler http.Handler
-		handler = route.HandlerFunc
-		handler = middlewares.Logger(handler, route.Name)
-
 		router.
 			Methods(route.Method).
 			Path(route.Pattern).
 			Name(route.Name).
-			Handler(handler)
+			Handler(route.HandlerFunc)
 	}
 
 	return router

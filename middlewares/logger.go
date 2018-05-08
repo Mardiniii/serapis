@@ -7,18 +7,15 @@ import (
 )
 
 // Logger logs out all the requests
-func Logger(inner http.Handler, name string) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
+func Logger(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	start := time.Now()
 
-		log.Printf(
-			"%s\t%s\t%s\t%s",
-			r.Method,
-			r.RequestURI,
-			name,
-			time.Since(start),
-		)
+	log.Printf(
+		"%s\t%s\t%s",
+		r.Method,
+		r.RequestURI,
+		time.Since(start),
+	)
 
-		inner.ServeHTTP(w, r)
-	})
+	next(w, r)
 }

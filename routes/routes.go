@@ -1,7 +1,7 @@
 package routes
 
 import (
-	controller "github.com/Mardiniii/serapis_api/controllers"
+	controllers "github.com/Mardiniii/serapis_api/controllers"
 )
 
 // Routes collection
@@ -12,24 +12,24 @@ var routes = Routes{
 		Name:        "HealthCheck",
 		Method:      "GET",
 		Pattern:     "/healthcheck",
-		HandlerFunc: controller.HealthCheck,
+		HandlerFunc: controllers.HealthCheck,
 	},
 	Route{
 		Name:        "Index Users",
 		Method:      "GET",
 		Pattern:     "/users",
-		HandlerFunc: controller.UserIndex,
+		HandlerFunc: controllers.UserIndex,
 	},
 	Route{
 		Name:        "Create User",
 		Method:      "POST",
 		Pattern:     "/users",
-		HandlerFunc: controller.UserCreate,
+		HandlerFunc: controllers.UserCreate,
 	},
 	Route{
 		Name:        "Get API Key",
 		Method:      "GET",
 		Pattern:     "/users/api-key",
-		HandlerFunc: controller.GetAPIKey,
+		HandlerFunc: controllers.GetAPIKey,
 	},
 }
