@@ -11,25 +11,31 @@ var routes = Routes{
 	Route{
 		Name:        "HealthCheck",
 		Method:      "GET",
-		Pattern:     "/healthcheck",
+		Pattern:     "/api/healthcheck",
 		HandlerFunc: controllers.HealthCheck,
 	},
 	Route{
 		Name:        "Index Users",
 		Method:      "GET",
-		Pattern:     "/users",
+		Pattern:     "/api/users",
 		HandlerFunc: controllers.UserIndex,
 	},
 	Route{
 		Name:        "Create User",
 		Method:      "POST",
-		Pattern:     "/users",
+		Pattern:     "/api/users",
 		HandlerFunc: controllers.UserCreate,
 	},
 	Route{
 		Name:        "Get API Key",
 		Method:      "GET",
-		Pattern:     "/users/api-key",
+		Pattern:     "/api/users/api-key",
 		HandlerFunc: controllers.GetAPIKey,
+	},
+	Route{
+		Name:        "Evaluation",
+		Method:      "POST",
+		Pattern:     "/api/eval/:platform",
+		HandlerFunc: controllers.CreateEvaluation,
 	},
 }

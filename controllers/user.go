@@ -2,10 +2,8 @@ package controllers
 
 import (
 	"encoding/json"
-	"errors"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	dbs "github.com/Mardiniii/serapis_api/dbs"
@@ -16,78 +14,52 @@ import (
 
 // UserIndex handler for /users
 func UserIndex(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	err := json.NewEncoder(w).Encode(dbs.UsersRepo)
-	if err != nil {
-		log.Panicln(err)
-	}
+	respondWithJSON(w, http.StatusOK, dbs.UsersRepo)
 }
 
 // UserCreate handler for user/ - POST
 func UserCreate(w http.ResponseWriter, r *http.Request) {
 	var user models.User
-	var err error
 
 	// Extract JSON payload
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
-		log.Panicln(err)
+		respondWithError(w, http.StatusBadRequest, "Invalid payload")
+		return
 	}
 	defer r.Body.Close()
 
 	// Parse JSON data with User struct
 	err = json.Unmarshal(body, &user)
 	if err != nil {
-		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		err = json.NewEncoder(w).Encode("The user was not created")
-
-		if err != nil {
-			log.Panicln(err)
-		}
+		respondWithError(w, http.StatusUnprocessableEntity, "The user was not created")
+		return
 	}
 
 	// Create the new user
-	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	user, err = dbs.RepoCreateUser(user)
-
 	if err != nil {
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusConflict)
-			return
-		}
-	} else {
-		w.WriteHeader(http.StatusCreated)
-		err = json.NewEncoder(w).Encode(user)
-		if err != nil {
-			log.Panicln(err)
-		}
+		respondWithError(w, http.StatusConflict, "The user was not created")
+		return
 	}
+	respondWithJSON(w, http.StatusCreated, user)
 }
 
 // GetAPIKey returns the JSON WEB Token for the user
 func GetAPIKey(w http.ResponseWriter, r *http.Request) {
 	// Extract query string param
 	keys, params := r.URL.Query()["email"]
-	email := string(keys[0])
-	if !params || len(keys) < 1 || email == "" {
-		err := errors.New("Email param is missing")
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if !params || len(keys) < 1 || string(keys[0]) == "" {
+		respondWithError(w, http.StatusBadRequest, "Email param not given in the query string")
 		return
 	}
 
-	user, err := dbs.RepoFindUserByEmail(email)
+	user, err := dbs.RepoFindUserByEmail(string(keys[0]))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		respondWithError(w, http.StatusNotFound, "User not found")
 		return
 	}
+
 	t := models.JWT{Token: user.APIKey}
-	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(w).Encode(t)
-	if err != nil {
-		log.Panicln(err)
-	}
+	respondWithJSON(w, http.StatusCreated, t)
 }
