@@ -5,7 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	middlewares "../middlewares"
+	middlewares "github.com/Mardiniii/serapis_api/middlewares"
 )
 
 // Router returns a new router with all the routes

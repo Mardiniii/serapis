@@ -6,6 +6,7 @@ import (
 	"time"
 
 	models "github.com/Mardiniii/serapis_api/models"
+	"github.com/Mardiniii/serapis_api/services"
 )
 
 // Users collection
@@ -61,7 +62,7 @@ func RepoCreateUser(u models.User) (models.User, error) {
 		currentID++
 		u.ID = currentID
 		u.CreatedAt = time.Now()
-		u.APIKey = ""
+		u.APIKey = services.GenerateAPIKey(u)
 		UsersRepo = append(UsersRepo, u)
 		return u, nil
 	}
