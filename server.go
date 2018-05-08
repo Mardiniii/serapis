@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	dbs "./dbs"
-	routes "./routes"
+	dbs "github.com/Mardiniii/serapis_api/dbs"
+	routes "github.com/Mardiniii/serapis_api/routes"
 )
 
 func main() {
