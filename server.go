@@ -15,6 +15,8 @@ func main() {
 
 	n := negroni.New()
 	n.Use(negroni.HandlerFunc(middlewares.Logger))
+	n.Use(negroni.HandlerFunc(middlewares.AuthHeaderValidator))
+	n.Use(negroni.HandlerFunc(middlewares.Authenticator))
 	n.UseHandler(router)
 
 	println("Creating seed data")
