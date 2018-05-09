@@ -8,7 +8,7 @@ import (
 
 // HealthCheck handler for /healthcheck
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	respondWithJSON(
+	RespondWithJSON(
 		w,
 		http.StatusOK,
 		map[string]string{"status": "All systems reporting at 100%"},
