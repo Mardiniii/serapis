@@ -1,11 +1,11 @@
-package services
+package common
 
 import (
 	"fmt"
 	"log"
 
-	models "github.com/Mardiniii/serapis/api/models"
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/Mardiniii/serapis/api/models"
+	"github.com/dgrijalva/jwt-go"
 )
 
 // GenerateAPIKey using JWT

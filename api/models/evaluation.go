@@ -9,8 +9,8 @@ type Evaluation struct {
 	ID        int       `json:"id"`
 	UserID    int       `json:"user_id"`
 	Status    string    `json:"status"`
-	Platform  string    `json:"platform"`
-	Request   string    `json:"request"`
+	Language  string    `json:"language"`
+	Code      string    `json:"code"`
 	ExitCode  int       `json:"exit_code"`
 	CreatedAt time.Time `json:"created_at"`
 }

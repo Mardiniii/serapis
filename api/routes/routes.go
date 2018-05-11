@@ -1,7 +1,7 @@
 package routes
 
 import (
-	controllers "github.com/Mardiniii/serapis/api/controllers"
+	"github.com/Mardiniii/serapis/api/controllers"
 )
 
 // Routes collection
@@ -35,7 +35,7 @@ var routes = Routes{
 	Route{
 		Name:        "Evaluation",
 		Method:      "POST",
-		Pattern:     "/api/evaluations/{platform}",
+		Pattern:     "/api/evaluations/{language}",
 		HandlerFunc: controllers.CreateEvaluation,
 	},
 }

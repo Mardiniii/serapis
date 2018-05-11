@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Mardiniii/serapis/api/common"
 	"github.com/Mardiniii/serapis/api/controllers"
-	"github.com/Mardiniii/serapis/api/services"
 )
 
 func extractHeader(r *http.Request, key string) string {
@@ -43,7 +43,7 @@ func AuthHeaderValidator(w http.ResponseWriter, r *http.Request, next http.Handl
 func Authenticator(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	apiKey := extractAuthorizationHeader(r)
 
-	valid := services.ValidateAPIKey(apiKey)
+	valid := common.ValidateAPIKey(apiKey)
 	if !valid {
 		controllers.RespondWithError(w, http.StatusUnauthorized, "Unvalid API Key")
 		return

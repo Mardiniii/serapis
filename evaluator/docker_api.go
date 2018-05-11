@@ -1,7 +1,6 @@
 package evaluator
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/docker/docker/api/types"
@@ -47,15 +46,16 @@ func startContainer(cli *client.Client, id string) error {
 	return err
 }
 
-func waitContainer(cli *client.Client, id string) {
+func waitContainer(cli *client.Client, id string) int {
 	statusCh, errCh := cli.ContainerWait(ctx, id, container.WaitConditionNotRunning)
 	select {
 	case err := <-errCh:
 		if err != nil {
 			panic(err)
 		}
+		return 1
 	case okBody := <-statusCh:
-		fmt.Println("Exit code:", okBody.StatusCode)
+		return int(okBody.StatusCode)
 	}
 }
 

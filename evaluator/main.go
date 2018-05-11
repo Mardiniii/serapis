@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -32,7 +33,7 @@ func copyLogsToStdOut(output io.Reader) {
 }
 
 // Evaluate uses the params givent to run a piece code into an isolated container
-func Evaluate(lang, code string) {
+func Evaluate(lang, code string) int {
 	var err error
 	img := images[lang]
 
@@ -59,7 +60,8 @@ func Evaluate(lang, code string) {
 	checkError(err)
 
 	// Wait for container
-	waitContainer(cli, resp.ID)
+	exitCode := waitContainer(cli, resp.ID)
+	fmt.Println(exitCode)
 
 	// Log container
 	output, err := logContainer(cli, resp.ID)
@@ -73,4 +75,6 @@ func Evaluate(lang, code string) {
 	// Remove the file from the /tmp/scripts directory after finishing
 	err = removeFile(fileName)
 	checkError(err)
+
+	return exitCode
 }

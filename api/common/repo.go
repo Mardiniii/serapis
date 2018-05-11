@@ -1,12 +1,11 @@
-package dbs
+package common
 
 import (
 	"errors"
 	"fmt"
 	"time"
 
-	models "github.com/Mardiniii/serapis/api/models"
-	"github.com/Mardiniii/serapis/api/services"
+	"github.com/Mardiniii/serapis/api/models"
 )
 
 // Users collection
@@ -62,7 +61,7 @@ func RepoCreateUser(u models.User) (models.User, error) {
 		currentID++
 		u.ID = currentID
 		u.CreatedAt = time.Now()
-		u.APIKey = services.GenerateAPIKey(u)
+		u.APIKey = GenerateAPIKey(u)
 		UsersRepo = append(UsersRepo, u)
 		return u, nil
 	}
