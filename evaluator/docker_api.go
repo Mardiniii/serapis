@@ -25,10 +25,9 @@ func logContainer(cli *client.Client, id string) (io.Reader, error) {
 
 func createContainer(cli *client.Client, img string, cmd []string) (container.ContainerCreateCreatedBody, error) {
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Image:        img,
-		AttachStderr: true,
-		AttachStdout: true,
-		Cmd:          cmd,
+		Tty:   true,
+		Image: img,
+		Cmd:   cmd,
 	}, &container.HostConfig{
 		Mounts: []mount.Mount{
 			{

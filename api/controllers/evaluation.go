@@ -47,8 +47,9 @@ func CreateEvaluation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	eval.Language = lang
-	exitCode := evaluator.Evaluate(lang, eval.Code)
+	exitCode, output := evaluator.Evaluate(lang, eval.Code)
 	eval.ExitCode = exitCode
+	eval.Output = output
 
 	RespondWithJSON(w, http.StatusOK, eval)
 }

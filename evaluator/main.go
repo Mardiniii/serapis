@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -32,8 +33,17 @@ func copyLogsToStdOut(output io.Reader) {
 	io.Copy(os.Stdout, output)
 }
 
+func parseLogsToString(output io.Reader) (string, error) {
+	b, err := ioutil.ReadAll(output)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+
+}
+
 // Evaluate uses the params givent to run a piece code into an isolated container
-func Evaluate(lang, code string) int {
+func Evaluate(lang, code string) (int, string) {
 	var err error
 	img := images[lang]
 
@@ -63,10 +73,13 @@ func Evaluate(lang, code string) int {
 	exitCode := waitContainer(cli, resp.ID)
 	fmt.Println(exitCode)
 
-	// Log container
+	// Log container in the output Reader
 	output, err := logContainer(cli, resp.ID)
 	checkError(err)
-	copyLogsToStdOut(output)
+
+	// Parse logs as string to be returned
+	containerOuput, err := parseLogsToString(output)
+	checkError(err)
 
 	// Remove container before exit
 	err = removeContainer(cli, resp.ID)
@@ -76,5 +89,5 @@ func Evaluate(lang, code string) int {
 	err = removeFile(fileName)
 	checkError(err)
 
-	return exitCode
+	return exitCode, containerOuput
 }
