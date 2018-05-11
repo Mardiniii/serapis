@@ -11,6 +11,7 @@ type Evaluation struct {
 	Status    string    `json:"status"`
 	Language  string    `json:"language"`
 	Code      string    `json:"code"`
+	Stdin     []string  `json:"stdin"`
 	Output    string    `json:"output"`
 	ExitCode  int       `json:"exit_code"`
 	CreatedAt time.Time `json:"created_at"`

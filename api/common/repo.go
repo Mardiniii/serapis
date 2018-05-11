@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Mardiniii/serapis/api/models"
+	"github.com/Mardiniii/serapis/common/models"
 )
 
 // Users collection

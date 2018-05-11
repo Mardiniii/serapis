@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/Mardiniii/serapis/api/common"
-	"github.com/Mardiniii/serapis/api/models"
+	"github.com/Mardiniii/serapis/common/models"
 )
 
 // User routes handlers

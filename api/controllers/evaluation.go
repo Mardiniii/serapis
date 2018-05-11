@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/Mardiniii/serapis/api/models"
+	"github.com/Mardiniii/serapis/common/models"
 	"github.com/Mardiniii/serapis/evaluator"
 	"github.com/gorilla/mux"
 )
