@@ -6,8 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	dbs "github.com/Mardiniii/serapis_api/dbs"
-	models "github.com/Mardiniii/serapis_api/models"
+	dbs "github.com/Mardiniii/serapis/api/dbs"
+	models "github.com/Mardiniii/serapis/api/models"
 )
 
 // User routes handlers

@@ -1,16 +1,17 @@
-package main
+package api
 
 import (
 	"log"
 	"net/http"
 
-	dbs "github.com/Mardiniii/serapis_api/dbs"
-	middlewares "github.com/Mardiniii/serapis_api/middlewares"
-	routes "github.com/Mardiniii/serapis_api/routes"
+	dbs "github.com/Mardiniii/serapis/api/dbs"
+	middlewares "github.com/Mardiniii/serapis/api/middlewares"
+	routes "github.com/Mardiniii/serapis/api/routes"
 	"github.com/urfave/negroni"
 )
 
-func main() {
+// Init inits API server
+func Init() {
 	var router = routes.Router()
 
 	n := negroni.New()

@@ -1,7 +1,7 @@
 package routes
 
 import (
-	controllers "github.com/Mardiniii/serapis_api/controllers"
+	controllers "github.com/Mardiniii/serapis/api/controllers"
 )
 
 // Routes collection

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	models "github.com/Mardiniii/serapis_api/models"
+	models "github.com/Mardiniii/serapis/api/models"
 	jwt "github.com/dgrijalva/jwt-go"
 )
 

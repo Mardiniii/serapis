@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	models "github.com/Mardiniii/serapis_api/models"
-	"github.com/Mardiniii/serapis_api/services"
+	models "github.com/Mardiniii/serapis/api/models"
+	"github.com/Mardiniii/serapis/api/services"
 )
 
 // Users collection

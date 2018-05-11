@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Mardiniii/serapis_api/controllers"
-	"github.com/Mardiniii/serapis_api/services"
+	"github.com/Mardiniii/serapis/api/controllers"
+	"github.com/Mardiniii/serapis/api/services"
 )
 
 func extractHeader(r *http.Request, key string) string {
