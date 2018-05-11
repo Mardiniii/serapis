@@ -15,7 +15,10 @@ func pullImage(cli *client.Client, imgName string) (io.Reader, error) {
 }
 
 func logContainer(cli *client.Client, id string) (io.Reader, error) {
-	output, err := cli.ContainerLogs(ctx, id, types.ContainerLogsOptions{ShowStdout: true})
+	output, err := cli.ContainerLogs(ctx, id, types.ContainerLogsOptions{
+		ShowStdout: true,
+		ShowStderr: true,
+	})
 
 	return output, err
 }
@@ -24,9 +27,7 @@ func createContainer(cli *client.Client, img string, cmd []string) (container.Co
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
 		Image:        img,
 		AttachStderr: true,
-		AttachStdin:  true,
 		AttachStdout: true,
-		Tty:          true,
 		Cmd:          cmd,
 	}, &container.HostConfig{
 		Mounts: []mount.Mount{
