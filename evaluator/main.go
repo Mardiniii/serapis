@@ -2,12 +2,12 @@ package evaluator
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
 
+	"github.com/Mardiniii/serapis/common/models"
 	"github.com/docker/docker/client"
 )
 
@@ -42,16 +42,16 @@ func parseLogsToString(output io.Reader) (string, error) {
 
 }
 
-// Evaluate uses the params givent to run a piece code into an isolated container
-func Evaluate(lang, code string) (int, string) {
+// Start uses the params givent to run a piece code into an isolated container
+func Start(eval *models.Evaluation) {
 	var err error
-	img := images[lang]
+	img := images[eval.Language]
 
 	// Create a temporary file with the code to evaluate
-	fileName, err := createFile(lang, code)
+	fileName, err := createFile(eval.Language, eval.Code)
 	checkError(err)
 
-	cmd := []string{lang, "/scripts/" + fileName}
+	cmd := []string{eval.Language, "/scripts/" + fileName}
 
 	cli, err := client.NewEnvClient()
 	checkError(err)
@@ -70,8 +70,7 @@ func Evaluate(lang, code string) (int, string) {
 	checkError(err)
 
 	// Wait for container
-	exitCode := waitContainer(cli, resp.ID)
-	fmt.Println(exitCode)
+	eval.ExitCode = waitContainer(cli, resp.ID)
 
 	// Log container in the output Reader
 	output, err := logContainer(cli, resp.ID)
@@ -80,6 +79,7 @@ func Evaluate(lang, code string) (int, string) {
 	// Parse logs as string to be returned
 	containerOuput, err := parseLogsToString(output)
 	checkError(err)
+	eval.Output = containerOuput
 
 	// Remove container before exit
 	err = removeContainer(cli, resp.ID)
@@ -88,6 +88,4 @@ func Evaluate(lang, code string) (int, string) {
 	// Remove the file from the /tmp/scripts directory after finishing
 	err = removeFile(fileName)
 	checkError(err)
-
-	return exitCode, containerOuput
 }
