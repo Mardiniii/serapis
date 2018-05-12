@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -71,12 +72,12 @@ func attachContainer(cli *client.Client, id string, stdin []string) error {
 }
 
 func waitContainer(cli *client.Client, id string) int {
-	statusCh, errCh := cli.ContainerWait(ctx, id, container.WaitConditionNotRunning)
+	waitCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	statusCh, errCh := cli.ContainerWait(waitCtx, id, container.WaitConditionNotRunning)
 	select {
 	case err := <-errCh:
-		if err != nil {
-			panic(err)
-		}
+		checkError(err)
 		return 1
 	case okBody := <-statusCh:
 		return int(okBody.StatusCode)
