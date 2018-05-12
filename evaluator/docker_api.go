@@ -1,7 +1,10 @@
 package evaluator
 
 import (
+	"context"
 	"io"
+	"log"
+	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -25,9 +28,11 @@ func logContainer(cli *client.Client, id string) (io.Reader, error) {
 
 func createContainer(cli *client.Client, img string, cmd []string) (container.ContainerCreateCreatedBody, error) {
 	resp, err := cli.ContainerCreate(ctx, &container.Config{
-		Tty:   true,
-		Image: img,
-		Cmd:   cmd,
+		Tty:       true,
+		OpenStdin: true,
+		StdinOnce: true,
+		Image:     img,
+		Cmd:       cmd,
 	}, &container.HostConfig{
 		Mounts: []mount.Mount{
 			{
@@ -44,6 +49,25 @@ func createContainer(cli *client.Client, img string, cmd []string) (container.Co
 func startContainer(cli *client.Client, id string) error {
 	err := cli.ContainerStart(ctx, id, types.ContainerStartOptions{})
 	return err
+}
+
+func attachContainer(cli *client.Client, id string, stdin []string) error {
+	log.Println("Received Stdin in command")
+	opts := types.ContainerAttachOptions{
+		Stream: true,
+		Stdin:  true,
+	}
+	resp, err := cli.ContainerAttach(context.Background(), id, opts)
+	if err != nil {
+		return err
+	}
+	defer resp.Close()
+
+	str := strings.Join(stdin, "\n") + "\n"
+	log.Println("Writing to Stdin: " + str)
+	resp.Conn.Write([]byte(str))
+
+	return nil
 }
 
 func waitContainer(cli *client.Client, id string) int {

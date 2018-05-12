@@ -25,6 +25,7 @@ func supportedLanguage(lang string) bool {
 // CreateEvaluation handler to process a new evaluation request
 func CreateEvaluation(w http.ResponseWriter, r *http.Request) {
 	var eval models.Evaluation
+	var statusCode = http.StatusOK
 
 	lang := mux.Vars(r)["language"]
 	if !supportedLanguage(lang) {
@@ -40,14 +41,19 @@ func CreateEvaluation(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	// Parse JSON data with User struct
+	// Parse JSON data with Evaluation struct
+	eval.Language = lang
 	err = json.Unmarshal(body, &eval)
 	if err != nil {
-		RespondWithError(w, http.StatusUnprocessableEntity, "The evaluation was not created")
+		RespondWithError(w, http.StatusUnprocessableEntity, "The evaluation was not created"+err.Error())
 		return
 	}
-	eval.Language = lang
-	evaluator.Start(&eval)
 
-	RespondWithJSON(w, http.StatusOK, eval)
+	// Evaluate request
+	evaluator.Start(&eval)
+	if eval.ExitCode != 0 {
+		statusCode = http.StatusUnprocessableEntity
+	}
+
+	RespondWithJSON(w, statusCode, eval)
 }

@@ -69,6 +69,12 @@ func Start(eval *models.Evaluation) {
 	err = startContainer(cli, resp.ID)
 	checkError(err)
 
+	// Attach to container is eval.Stdin has values
+	if len(eval.Stdin) > 0 {
+		err = attachContainer(cli, resp.ID, eval.Stdin)
+		checkError(err)
+	}
+
 	// Wait for container
 	eval.ExitCode = waitContainer(cli, resp.ID)
 

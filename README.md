@@ -1,8 +1,14 @@
-# Serapis API
+# Serapis
 
-Code Evaluator API.
+Code Evaluator
 
-In progress
+## API
+
+Work in progress
+
+## Evaluator
+
+Work in progress
 
 ## License
 
