@@ -23,6 +23,17 @@ var extensions = map[string]string{
 	"ruby": "rb",
 }
 
+var packageManagers = map[string]map[string]string{
+	"node": map[string]string{
+		"installer": "npm install ",
+		"versioner": "@",
+	},
+	"ruby": map[string]string{
+		"installer": "gem install ",
+		"versioner": ":",
+	},
+}
+
 func checkError(err error) {
 	if err != nil {
 		log.Print(err)
@@ -45,14 +56,30 @@ func parseLogsToString(output io.Reader) (string, error) {
 // Start uses the params givent to run a piece code into an isolated container
 func Start(eval *models.Evaluation) {
 	var err error
+	var cmd []string
+	var codeFileName string
+	var runFileName string
 	img := images[eval.Language]
 
 	// Create a temporary file with the code to evaluate
-	fileName, err := createFile(eval.Language, eval.Code)
+	codeFileName, err = createCodeFile(eval.Language, eval.Code)
 	checkError(err)
+	defer removeFile(codeFileName)
 
-	cmd := []string{eval.Language, "/scripts/" + fileName}
+	// Dependencies installation
+	if len(eval.Dependencies) > 0 {
+		// Create a temporary .sh file with the commands to install dependencies and
+		// run the code file
+		runFileName, err = createRunFile(eval.Language, codeFileName, eval.Dependencies)
+		checkError(err)
+		defer removeFile(runFileName)
 
+		cmd = []string{"./scripts/" + runFileName}
+	} else if len(eval.Stdin) > 0 {
+		cmd = []string{eval.Language, "/scripts/" + codeFileName}
+	}
+
+	// Create a Docker client
 	cli, err := client.NewEnvClient()
 	checkError(err)
 
@@ -89,9 +116,5 @@ func Start(eval *models.Evaluation) {
 
 	// Remove container before exit
 	err = removeContainer(cli, resp.ID)
-	checkError(err)
-
-	// Remove the file from the /tmp/scripts directory after finishing
-	err = removeFile(fileName)
 	checkError(err)
 }

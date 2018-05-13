@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func createFile(lang, code string) (string, error) {
+func createCodeFile(lang, code string) (string, error) {
 	fileName := lang + "." + extensions[lang]
 	filePath, _ := filepath.Abs("../serapis/tmp/scripts/" + fileName)
 
@@ -17,6 +17,40 @@ func createFile(lang, code string) (string, error) {
 	defer file.Close()
 
 	fmt.Fprintf(file, code)
+	return fileName, nil
+}
+
+func createRunFile(lang, codeFileName string, dependencies map[string]string) (string, error) {
+	manager := packageManagers[lang]
+	fileName := "solution.sh"
+	filePath, _ := filepath.Abs("../serapis/tmp/scripts/" + fileName)
+
+	file, err := os.Create(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	// Update file permissions before copying in container
+	err = os.Chmod(filePath, 0777)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Fprintln(file, "#!/bin/bash")
+	for dependency, version := range dependencies {
+		var target string
+
+		if version == "latest" {
+			target = dependency
+		} else {
+			target = dependency + manager["versioner"] + version
+		}
+
+		fmt.Fprintln(file, manager["installer"]+target)
+	}
+	fmt.Fprintln(file, lang+" /scripts/"+codeFileName)
+
 	return fileName, nil
 }
 
