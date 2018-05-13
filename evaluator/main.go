@@ -61,16 +61,18 @@ func Start(eval *models.Evaluation) {
 	var runFileName string
 	img := images[eval.Language]
 
-	// Create a temporary file with the code to evaluate
-	codeFileName, err = createCodeFile(eval.Language, eval.Code)
-	checkError(err)
-	defer removeFile(codeFileName)
+	// Create a temporary file with the code to evaluate if a Git repo isn't present
+	if len(eval.Git) == 0 {
+		codeFileName, err = createCodeFile(eval.Language, eval.Code)
+		checkError(err)
+		defer removeFile(codeFileName)
+	}
 
 	// Dependencies installation
-	if len(eval.Dependencies) > 0 {
+	if len(eval.Dependencies) > 0 || len(eval.Git) > 0 {
 		// Create a temporary .sh file with the commands to install dependencies and
 		// run the code file
-		runFileName, err = createRunFile(eval.Language, codeFileName, eval.Dependencies)
+		runFileName, err = createRunFile(eval, codeFileName)
 		checkError(err)
 		defer removeFile(runFileName)
 

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/Mardiniii/serapis/common/models"
 )
 
 func createCodeFile(lang, code string) (string, error) {
@@ -20,8 +22,8 @@ func createCodeFile(lang, code string) (string, error) {
 	return fileName, nil
 }
 
-func createRunFile(lang, codeFileName string, dependencies map[string]string) (string, error) {
-	manager := packageManagers[lang]
+func createRunFile(eval *models.Evaluation, codeFileName string) (string, error) {
+	manager := packageManagers[eval.Language]
 	fileName := "solution.sh"
 	filePath, _ := filepath.Abs("../serapis/tmp/scripts/" + fileName)
 
@@ -38,7 +40,13 @@ func createRunFile(lang, codeFileName string, dependencies map[string]string) (s
 	}
 
 	fmt.Fprintln(file, "#!/bin/bash")
-	for dependency, version := range dependencies {
+
+	if eval.Git["repo"] != "" {
+		fmt.Fprintln(file, "git clone "+eval.Git["repo"]+".git gitrepo")
+		fmt.Fprintln(file, "cd gitrepo/")
+	}
+
+	for dependency, version := range eval.Dependencies {
 		var target string
 
 		if version == "latest" {
@@ -49,7 +57,12 @@ func createRunFile(lang, codeFileName string, dependencies map[string]string) (s
 
 		fmt.Fprintln(file, manager["installer"]+target)
 	}
-	fmt.Fprintln(file, lang+" /scripts/"+codeFileName)
+
+	if codeFileName != "" {
+		fmt.Fprintln(file, eval.Language+" /scripts/"+codeFileName)
+	} else {
+		fmt.Fprintln(file, eval.Git["command"])
+	}
 
 	return fileName, nil
 }
