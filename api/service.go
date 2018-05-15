@@ -10,7 +10,7 @@ import (
 	"github.com/urfave/negroni"
 )
 
-// Init inits API server
+// Init starts API server
 func Init() {
 	var router = routes.Router()
 
