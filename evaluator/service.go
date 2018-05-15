@@ -1,7 +1,6 @@
 package evaluator
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -15,7 +14,8 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func main() {
+// Init starts Evaluator service
+func Init() {
 	// Create connection
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -61,14 +61,15 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			var exec executor
-			err := json.Unmarshal(d.Body, &exec.eval)
-			failOnError(err, "Failed to convert body to evaluation")
-
-			log.Println("Evaluating new request")
-			exec.Start()
-			body, err := json.Marshal(exec.eval)
-			failOnError(err, "Failed to parse response to json")
+			// var exec executor
+			// err := json.Unmarshal(d.Body, &exec.eval)
+			// failOnError(err, "Failed to convert body to evaluation")
+			//
+			// log.Println("Evaluating new request")
+			// exec.Start()
+			// body, err := json.Marshal(exec.eval)
+			// failOnError(err, "Failed to parse response to json")
+			log.Printf("Received a message: %s", d.Body)
 
 			err = ch.Publish(
 				"",        // exchange
@@ -76,9 +77,9 @@ func main() {
 				false,     // mandatory
 				false,     // immediate
 				amqp.Publishing{
-					ContentType:   "application/json",
+					ContentType:   "text/plain",
 					CorrelationId: d.CorrelationId,
-					Body:          body,
+					Body:          d.Body,
 				})
 			failOnError(err, "Failed to publish a message")
 
