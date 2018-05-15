@@ -1,5 +1,6 @@
 package database
 
+// Statements for users table
 const usersTable = `CREATE TABLE IF NOT EXISTS users (
   id serial PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
@@ -10,6 +11,13 @@ const usersTable = `CREATE TABLE IF NOT EXISTS users (
 const createUser = `INSERT INTO users (email, api_key)
 VALUES ($1, $2)
 RETURNING id`
+
+const deleteUser = `DELETE FROM users
+WHERE id = $1;`
+
+const userByEmail = `SELECT * FROM users WHERE email=$1;`
+
+// Staments for evaluations table
 
 const evaluationsTable = `CREATE TABLE IF NOT EXISTS evaluations (
   id serial PRIMARY KEY,

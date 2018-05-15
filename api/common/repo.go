@@ -1,10 +1,9 @@
 package common
 
 import (
-	"errors"
-	"fmt"
 	"time"
 
+	db "github.com/Mardiniii/serapis/common/database"
 	"github.com/Mardiniii/serapis/common/models"
 )
 
@@ -42,42 +41,25 @@ func RepoSeedData() {
 }
 
 // RepoFindUserByEmail finds a new user matching the given email
-func RepoFindUserByEmail(email string) (models.User, error) {
-	for _, u := range UsersRepo {
-		if u.Email == email {
-			return u, nil
-		}
-	}
-	err := errors.New("User not found")
-	// Not User found it
-	return models.User{}, err
+func RepoFindUserByEmail(email string) (u models.User, err error) {
+	u, err = db.Connection().FindUserByEmail(email)
+	return
 }
 
 // RepoCreateUser creates a new user
 func RepoCreateUser(u models.User) (models.User, error) {
 	var err error
 
-	if uniqueEmail(u.Email) {
-		currentID++
-		u.ID = currentID
-		u.CreatedAt = time.Now()
-		u.APIKey = GenerateAPIKey(u)
-		UsersRepo = append(UsersRepo, u)
-		return u, nil
-	}
-	err = errors.New("Email already exists")
-	return models.User{}, err
+	currentID++
+	u.ID = currentID
+	u.CreatedAt = time.Now()
+	u.APIKey = GenerateAPIKey(u)
+	err = db.Connection().CreateUser(&u)
+	return u, err
 }
 
-// RepoDestroyUser creates a new user
-func RepoDestroyUser(id int) (bool, error) {
-	for i, u := range UsersRepo {
-		if u.ID == id {
-			UsersRepo = append(UsersRepo[:i], UsersRepo[i+1:]...)
-			return true, nil
-		}
-	}
-	err := fmt.Errorf("Could not find User with id %d to be deleted", id)
-
-	return false, err
+// RepoDestroyUser removes a user
+func RepoDestroyUser(id int) (deleted bool, err error) {
+	err = db.Connection().DeleteUser(id)
+	return
 }
