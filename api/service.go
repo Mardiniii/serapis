@@ -7,11 +7,14 @@ import (
 	"github.com/Mardiniii/serapis/api/common"
 	"github.com/Mardiniii/serapis/api/middlewares"
 	"github.com/Mardiniii/serapis/api/routes"
+	"github.com/Mardiniii/serapis/common/database"
 	"github.com/urfave/negroni"
 )
 
 // Init starts API server
 func Init() {
+	pg := database.Connection()
+	defer pg.Db.Close()
 	var router = routes.Router()
 
 	n := negroni.New()
