@@ -2,12 +2,13 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 
+	"github.com/Mardiniii/serapis/api/broker"
 	"github.com/Mardiniii/serapis/common/models"
-	"github.com/Mardiniii/serapis/evaluator"
 	"github.com/gorilla/mux"
 )
 
@@ -50,7 +51,14 @@ func CreateEvaluation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Evaluate request
-	evaluator.Start(&eval)
+	// json, err := json.Marshal(eval)
+	resp, err := broker.EvaluationRPC("Este es el texto")
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid payload")
+		return
+	}
+	fmt.Println(resp)
+
 	if eval.ExitCode != 0 {
 		statusCode = http.StatusUnprocessableEntity
 	}
