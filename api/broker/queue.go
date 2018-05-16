@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"strconv"
 
 	"github.com/streadway/amqp"
 )
@@ -28,7 +29,7 @@ func randInt(min int, max int) int {
 }
 
 // EvaluationRPC publishes message to process RPC
-func EvaluationRPC(jsonBody string) (res []byte, err error) {
+func EvaluationRPC(id int) (res []byte, err error) {
 	// Create connection
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -74,7 +75,7 @@ func EvaluationRPC(jsonBody string) (res []byte, err error) {
 			ContentType:   "application/json",
 			CorrelationId: corrID,
 			ReplyTo:       q.Name,
-			Body:          []byte(jsonBody),
+			Body:          []byte(strconv.Itoa(id)),
 		})
 	failOnError(err, "Failed to publish a message")
 

@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/Mardiniii/serapis/api/broker"
+	db "github.com/Mardiniii/serapis/common/database"
 	"github.com/Mardiniii/serapis/common/models"
 	"github.com/gorilla/mux"
 )
@@ -42,17 +43,28 @@ func CreateEvaluation(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	// Parse JSON data with Evaluation struct
-	eval.Language = lang
 	err = json.Unmarshal(body, &eval)
 	if err != nil {
 		RespondWithError(w, http.StatusUnprocessableEntity, "The evaluation was not created"+err.Error())
 		return
 	}
 
-	// Evaluate request
-	// json, err := json.Marshal(eval)
-	resp, err := broker.EvaluationRPC("Este es el texto")
+	// Parse JSON data with Evaluation struct
+	ctx := r.Context()
+	user := ctx.Value("user").(models.User)
+
+	eval.UserID = user.ID
+	eval.Status = "created"
+	eval.Language = lang
+	// Create the new evaluation
+	err = db.RepoCreateEvaluation(&eval)
+	if err != nil {
+		RespondWithError(w, http.StatusConflict, "The evaluation was not created")
+		return
+	}
+
+	// Publish evaluation to the message queue
+	resp, err := broker.EvaluationRPC(eval.ID)
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, "Invalid payload")
 		return
@@ -62,6 +74,5 @@ func CreateEvaluation(w http.ResponseWriter, r *http.Request) {
 	if eval.ExitCode != 0 {
 		statusCode = http.StatusUnprocessableEntity
 	}
-
 	RespondWithJSON(w, statusCode, eval)
 }

@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/Mardiniii/serapis/api/common"
+	db "github.com/Mardiniii/serapis/common/database"
 	"github.com/Mardiniii/serapis/common/models"
 )
 
@@ -14,7 +14,7 @@ import (
 
 // GetUsers handler for /users
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	RespondWithJSON(w, http.StatusOK, common.RepoUsers())
+	RespondWithJSON(w, http.StatusOK, db.RepoUsers())
 }
 
 // CreateUser handler for user/ - POST
@@ -37,7 +37,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the new user
-	user, err = common.RepoCreateUser(user)
+	user, err = db.RepoCreateUser(user)
 	if err != nil {
 		RespondWithError(w, http.StatusConflict, "The user was not created")
 		return
@@ -54,7 +54,7 @@ func GetAPIKey(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := common.RepoFindUserByEmail(string(keys[0]))
+	user, err := db.RepoFindUserByEmail(string(keys[0]))
 	if err != nil {
 		RespondWithError(w, http.StatusNotFound, "User not found")
 		return
