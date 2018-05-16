@@ -7,7 +7,6 @@ import (
 
 	// Postgres package
 	_ "github.com/lib/pq"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -54,13 +53,4 @@ func Connection() *Postgres {
 func (conn *Postgres) RunMigrations() {
 	conn.createUsersTable()
 	conn.createEvaluationsTable()
-}
-
-func (conn *Postgres) createEvaluationsTable() (err error) {
-	if _, err = conn.Db.Exec(evaluationsTable); err != nil {
-		err = errors.Wrapf(err, "Can not create evaluations table (%s)", evaluationsTable)
-		return
-	}
-
-	return
 }
