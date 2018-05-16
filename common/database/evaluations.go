@@ -70,3 +70,23 @@ func (conn *Postgres) FindEvaluationByID(id int) (eval models.Evaluation, err er
 	}
 	return
 }
+
+// UpdateEvaluationStatus returns the evaluation with the given id
+func (conn *Postgres) UpdateEvaluationStatus(id int, status string) (err error) {
+	_, err = conn.Db.Exec(updateEvaluationStatus, id, status)
+	if err != nil {
+		log.Println("Can't update evaluation:", err)
+	}
+
+	return
+}
+
+// UpdateEvaluationResult returns the evaluation with the given id
+func (conn *Postgres) UpdateEvaluationResult(id, code int, output, status string) (err error) {
+	_, err = conn.Db.Exec(updateEvaluationResult, id, code, output, status)
+	if err != nil {
+		log.Println("Can't update evaluation:", err)
+	}
+
+	return
+}

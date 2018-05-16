@@ -60,3 +60,19 @@ func RepoCreateEvaluation(eval *models.Evaluation) error {
 	err = Connection().CreateEvaluation(eval)
 	return err
 }
+
+// RepoUpdateEvalStatus update evaluation status
+func RepoUpdateEvalStatus(id int, status string) error {
+	var err error
+
+	err = Connection().UpdateEvaluationStatus(id, status)
+	return err
+}
+
+// RepoUpdateEvalResult update evaluation exit code and output
+func RepoUpdateEvalResult(id, code int, output, status string) error {
+	var err error
+
+	err = Connection().UpdateEvaluationResult(id, code, output, status)
+	return err
+}
