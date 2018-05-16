@@ -38,3 +38,27 @@ func (conn *Postgres) FindUserByEmail(email string) (u models.User, err error) {
 	err = row.Scan(&u.ID, &u.Email, &u.APIKey, &u.CreatedAt)
 	return
 }
+
+// GetUsers returns all the users stored in database
+func (conn *Postgres) GetUsers() (users []models.User, err error) {
+	rows, err := conn.Db.Query(allUsers)
+	if err != nil {
+		log.Println(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var u = models.User{}
+		err = rows.Scan(&u.ID, &u.Email, &u.APIKey, &u.CreatedAt)
+		users = append(users, u)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+
+	err = rows.Err()
+	if err != nil {
+		log.Println(err)
+	}
+	return
+}

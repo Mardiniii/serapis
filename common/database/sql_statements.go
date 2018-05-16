@@ -17,6 +17,8 @@ WHERE id = $1;`
 
 const userByEmail = `SELECT * FROM users WHERE email=$1;`
 
+const allUsers = `SELECT * FROM users`
+
 // Staments for evaluations table
 
 const evaluationsTable = `CREATE TABLE IF NOT EXISTS evaluations (

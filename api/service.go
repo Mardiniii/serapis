@@ -14,6 +14,8 @@ import (
 // Init starts API server
 func Init() {
 	pg := database.Connection()
+	pg.RunMigrations()
+
 	defer pg.Db.Close()
 	var router = routes.Router()
 
