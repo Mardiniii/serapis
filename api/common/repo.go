@@ -46,3 +46,11 @@ func RepoUsers() (users []models.User) {
 	users, _ = db.Connection().GetUsers()
 	return
 }
+
+// RepoCreateEvaluation creates a new evaluation
+func RepoCreateEvaluation(eval *models.Evaluation) error {
+	var err error
+
+	err = db.Connection().CreateEvaluation(eval)
+	return err
+}
