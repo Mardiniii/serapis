@@ -14,7 +14,7 @@ import (
 
 // GetUsers handler for /users
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	RespondWithJSON(w, http.StatusOK, common.UsersRepo)
+	RespondWithJSON(w, http.StatusOK, common.RepoUsers())
 }
 
 // CreateUser handler for user/ - POST
