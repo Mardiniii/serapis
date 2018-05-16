@@ -34,8 +34,7 @@ type executor struct {
 }
 
 // Start uses the params givent to run a piece code into an isolated container
-func (e *executor) Start() {
-	var err error
+func (e *executor) Start() (exitCode int, containerOutput string, err error) {
 	var cmd []string
 	var codeFileName string
 	var runFileName string
@@ -85,18 +84,19 @@ func (e *executor) Start() {
 	}
 
 	// Wait for container
-	e.eval.ExitCode = waitContainer(cli, resp.ID)
+	exitCode = waitContainer(cli, resp.ID)
 
 	// Log container in the output Reader
 	output, err := logContainer(cli, resp.ID)
 	checkError(err)
 
 	// Parse logs as string to be returned
-	containerOuput, err := parseLogsToString(output)
+	containerOutput, err = parseLogsToString(output)
 	checkError(err)
-	e.eval.Output = containerOuput
 
 	// Remove container before exit
 	err = removeContainer(cli, resp.ID)
 	checkError(err)
+
+	return
 }
