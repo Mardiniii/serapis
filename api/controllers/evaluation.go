@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/Mardiniii/serapis/api/broker"
 	db "github.com/Mardiniii/serapis/common/database"
@@ -69,7 +69,13 @@ func CreateEvaluation(w http.ResponseWriter, r *http.Request) {
 		RespondWithError(w, http.StatusBadRequest, "Invalid payload")
 		return
 	}
-	fmt.Println(resp)
+
+	id, _ := strconv.Atoi(string(resp))
+	eval, err = db.RepoFindEvaluationByID(id)
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Can't find processed evaluation")
+		return
+	}
 
 	if eval.ExitCode != 0 {
 		statusCode = http.StatusUnprocessableEntity

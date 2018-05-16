@@ -46,5 +46,5 @@ WHERE id = $1
 RETURNING id;`
 
 const updateEvaluationResult = `UPDATE evaluations
-SET exit_code, output, status = $2, $3, $4
+SET exit_code = $2, output = $3, status = $4
 WHERE id = $1;`

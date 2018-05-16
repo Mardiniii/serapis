@@ -3,7 +3,9 @@ package evaluator
 import (
 	"fmt"
 	"log"
+	"strconv"
 
+	db "github.com/Mardiniii/serapis/common/database"
 	"github.com/streadway/amqp"
 )
 
@@ -61,15 +63,23 @@ func Init() {
 
 	go func() {
 		for d := range msgs {
-			// var exec executor
-			// err := json.Unmarshal(d.Body, &exec.eval)
-			// failOnError(err, "Failed to convert body to evaluation")
-			//
-			// log.Println("Evaluating new request")
-			// exec.Start()
-			// body, err := json.Marshal(exec.eval)
-			// failOnError(err, "Failed to parse response to json")
-			log.Printf("Received a message: %s", d.Body)
+			// Update eval status
+			id, _ := strconv.Atoi(string(d.Body))
+			fmt.Println("***Processing evaluation with id:", id)
+
+			err = db.RepoUpdateEvalStatus(id, "evaluating")
+			failOnError(err, "Failed to update evaluation status")
+			eval, err := db.RepoFindEvaluationByID(id)
+			failOnError(err, "Failed to find the evalution")
+
+			// Run evaluation
+			exec := executor{&eval}
+			exitCode, output, err := exec.Start()
+			failOnError(err, "Failed to process evaluation")
+
+			// Update evaluation
+			err = db.RepoUpdateEvalResult(id, exitCode, output, "finished")
+			failOnError(err, "Failed to update evaluation result")
 
 			err = ch.Publish(
 				"",        // exchange
@@ -77,7 +87,7 @@ func Init() {
 				false,     // mandatory
 				false,     // immediate
 				amqp.Publishing{
-					ContentType:   "text/plain",
+					ContentType:   "application/json",
 					CorrelationId: d.CorrelationId,
 					Body:          d.Body,
 				})
