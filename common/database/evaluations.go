@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"log"
 
 	"github.com/Mardiniii/serapis/common/models"
@@ -39,6 +40,8 @@ func (conn *Postgres) CreateEvaluation(eval *models.Evaluation) (err error) {
 
 // FindEvaluationByID returns the evaluation with the given id
 func (conn *Postgres) FindEvaluationByID(id int) (eval models.Evaluation, err error) {
+	var output sql.NullString
+	var exitCode sql.NullInt64
 	row := conn.Db.QueryRow(evaluationByID, id)
 
 	err = row.Scan(
@@ -50,9 +53,20 @@ func (conn *Postgres) FindEvaluationByID(id int) (eval models.Evaluation, err er
 		pq.Array(&eval.Stdin),
 		&eval.Dependencies,
 		&eval.Git,
-		&eval.Output,
-		&eval.ExitCode,
+		&output,
+		&exitCode,
 		&eval.CreatedAt,
 	)
+	if output.Valid {
+		eval.Output = output.String
+	} else {
+		eval.Output = ""
+	}
+
+	if exitCode.Valid {
+		eval.ExitCode = int(exitCode.Int64)
+	} else {
+		eval.ExitCode = -1
+	}
 	return
 }
