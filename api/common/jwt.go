@@ -25,7 +25,7 @@ func GenerateAPIKey(u models.User) string {
 }
 
 // ValidateAPIKey using JWT
-func ValidateAPIKey(apiKey string) bool {
+func ValidateAPIKey(apiKey string) (bool, string) {
 	token, err := jwt.Parse(apiKey, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
@@ -34,13 +34,13 @@ func ValidateAPIKey(apiKey string) bool {
 	})
 	if err != nil {
 		log.Println("Error", err.Error())
-		return false
+		return false, ""
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		fmt.Println(claims["username"], "user authenticated")
-		return true
+		return true, claims["username"].(string)
 	}
 
-	return false
+	return false, ""
 }

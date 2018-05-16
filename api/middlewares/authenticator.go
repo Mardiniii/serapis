@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	"context"
+
 	"github.com/Mardiniii/serapis/api/common"
 	"github.com/Mardiniii/serapis/api/controllers"
 )
@@ -43,10 +45,17 @@ func AuthHeaderValidator(w http.ResponseWriter, r *http.Request, next http.Handl
 func Authenticator(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	apiKey := extractAuthorizationHeader(r)
 
-	valid := common.ValidateAPIKey(apiKey)
+	valid, email := common.ValidateAPIKey(apiKey)
 	if !valid {
 		controllers.RespondWithError(w, http.StatusUnauthorized, "Unvalid API Key")
 		return
 	}
+
+	// Pass user in context request
+	user, _ := common.RepoFindUserByEmail(email)
+	ctx := r.Context()
+	ctx = context.WithValue(ctx, "user", user)
+	r = r.WithContext(ctx)
+
 	next(w, r)
 }
