@@ -50,6 +50,12 @@ func Connection() *Postgres {
 	return singletonConnection
 }
 
+// RunMigrations to create tables is don't exist yet
+func (conn *Postgres) RunMigrations() {
+	conn.createUsersTable()
+	conn.createEvaluationsTable()
+}
+
 func (conn *Postgres) createEvaluationsTable() (err error) {
 	if _, err = conn.Db.Exec(evaluationsTable); err != nil {
 		err = errors.Wrapf(err, "Can not create evaluations table (%s)", evaluationsTable)
