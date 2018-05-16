@@ -51,6 +51,12 @@ func Connection() *Postgres {
 
 // RunMigrations to create tables is don't exist yet
 func (conn *Postgres) RunMigrations() {
-	conn.createUsersTable()
-	conn.createEvaluationsTable()
+	err := conn.createUsersTable()
+	if err != nil {
+		log.Print(err)
+	}
+	err = conn.createEvaluationsTable()
+	if err != nil {
+		log.Print(err)
+	}
 }
