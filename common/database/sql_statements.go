@@ -26,9 +26,9 @@ const evaluationsTable = `CREATE TABLE IF NOT EXISTS evaluations (
   status VARCHAR(255) NOT NULL,
   language VARCHAR(255) NOT NULL,
 	code TEXT,
-	stdin TEXT[],
-	dependencies JSONB,
-	git JSONB,
+	stdin TEXT[] DEFAULT '{}'::TEXT[],
+	dependencies JSONB DEFAULT '{}'::JSONB,
+	git JSONB DEFAULT '{}'::JSONB,
 	output TEXT,
 	exit_code INT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
