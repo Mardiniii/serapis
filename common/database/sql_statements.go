@@ -37,3 +37,5 @@ const evaluationsTable = `CREATE TABLE IF NOT EXISTS evaluations (
 const createEvaluation = `INSERT INTO evaluations (user_id, status, language, code, stdin, dependencies, git)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING id, created_at`
+
+const evaluationByID = `SELECT * FROM evaluations WHERE id=$1;`

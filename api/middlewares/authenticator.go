@@ -9,6 +9,7 @@ import (
 
 	"github.com/Mardiniii/serapis/api/common"
 	"github.com/Mardiniii/serapis/api/controllers"
+	db "github.com/Mardiniii/serapis/common/database"
 )
 
 func extractHeader(r *http.Request, key string) string {
@@ -52,7 +53,7 @@ func Authenticator(w http.ResponseWriter, r *http.Request, next http.HandlerFunc
 	}
 
 	// Pass user in context request
-	user, _ := common.RepoFindUserByEmail(email)
+	user, _ := db.RepoFindUserByEmail(email)
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "user", user)
 	r = r.WithContext(ctx)

@@ -33,3 +33,21 @@ func (conn *Postgres) CreateEvaluation(eval *models.Evaluation) (err error) {
 	}
 	return
 }
+
+// FindEvaluationByID returns the evaluation with the given id
+func (conn *Postgres) FindEvaluationByID(id int) (eval models.Evaluation, err error) {
+	row := conn.Db.QueryRow(evaluationByID, id)
+
+	err = row.Scan(
+		&eval.ID,
+		&eval.UserID,
+		&eval.Status,
+		&eval.Language,
+		&eval.Code,
+		pq.Array(&eval.Stdin),
+		&eval.Dependencies,
+		&eval.Git,
+		&eval.CreatedAt,
+	)
+	return
+}
