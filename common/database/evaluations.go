@@ -19,14 +19,17 @@ func (conn *Postgres) createEvaluationsTable() (err error) {
 
 // CreateEvaluation adds a new evaluation record to the database
 func (conn *Postgres) CreateEvaluation(eval *models.Evaluation) (err error) {
+	dep, _ := eval.Dependencies.MarshalJSON()
+	git, _ := eval.Git.MarshalJSON()
+
 	err = conn.Db.QueryRow(createEvaluation,
 		eval.UserID,
 		eval.Status,
 		eval.Language,
 		eval.Code,
 		pq.Array(eval.Stdin),
-		eval.Dependencies,
-		eval.Git,
+		dep,
+		git,
 	).Scan(&eval.ID, &eval.CreatedAt)
 	if err != nil {
 		log.Println(err)
@@ -47,6 +50,8 @@ func (conn *Postgres) FindEvaluationByID(id int) (eval models.Evaluation, err er
 		pq.Array(&eval.Stdin),
 		&eval.Dependencies,
 		&eval.Git,
+		&eval.Output,
+		&eval.ExitCode,
 		&eval.CreatedAt,
 	)
 	return
