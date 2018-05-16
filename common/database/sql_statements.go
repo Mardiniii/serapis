@@ -39,3 +39,12 @@ VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING id, created_at`
 
 const evaluationByID = `SELECT * FROM evaluations WHERE id=$1;`
+
+const updateEvaluationStatus = `UPDATE evaluations
+SET status = $2
+WHERE id = $1
+RETURNING id;`
+
+const updateEvaluationResult = `UPDATE evaluations
+SET exit_code, output, status = $2, $3, $4
+WHERE id = $1;`
