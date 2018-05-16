@@ -18,7 +18,7 @@ func (conn *Postgres) createUsersTable() (err error) {
 
 // CreateUser adds a new user record to the database
 func (conn *Postgres) CreateUser(u *models.User) (err error) {
-	err = conn.Db.QueryRow(createUser, u.Email, u.APIKey).Scan(&u.ID)
+	err = conn.Db.QueryRow(createUser, u.Email, u.APIKey).Scan(&u.ID, &u.CreatedAt)
 	if err != nil {
 		log.Println(err)
 	}
