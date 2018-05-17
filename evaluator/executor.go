@@ -40,14 +40,14 @@ func (e *executor) Start() (exitCode int, containerOutput string, err error) {
 	var runFileName string
 	img := images[e.eval.Language]
 
-	// Create a temporary file with the code to evaluate if a Git repo isn't present
-	if len(e.eval.Git) == 0 {
+	if e.eval.Code != "" {
 		codeFileName, err = createCodeFile(e.eval.Language, e.eval.Code)
-		checkError(err)
 		defer removeFile(codeFileName)
+		checkError(err)
 	}
+	cmd = []string{e.eval.Language, "/scripts/" + codeFileName}
 
-	// Dependencies installation
+	// Create a temporary file with the code to evaluate if a Git repo isn't present
 	if len(e.eval.Dependencies) > 0 || len(e.eval.Git) > 0 {
 		// Create a temporary .sh file with the commands to install dependencies and
 		// run the code file
@@ -56,8 +56,6 @@ func (e *executor) Start() (exitCode int, containerOutput string, err error) {
 		defer removeFile(runFileName)
 
 		cmd = []string{"./scripts/" + runFileName}
-	} else if len(e.eval.Stdin) > 0 {
-		cmd = []string{e.eval.Language, "/scripts/" + codeFileName}
 	}
 
 	// Create a Docker client
