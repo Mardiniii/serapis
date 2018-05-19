@@ -9,12 +9,23 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Kubernetes connection
 const (
-	host   = "localhost"
-	port   = 5432
-	user   = "postgres"
-	dbname = "serapis"
+	host     = "postgres-postgresql"
+	port     = 5432
+	user     = "admin"
+	password = "hola-mama"
+	dbname   = "serapis"
 )
+
+// Local connection
+// const (
+// 	host     = "localhost"
+// 	port     = 5432
+// 	user     = "postgres"
+// 	password = ""
+// 	dbname   = "serapis"
+// )
 
 var singletonConnection *Postgres
 
@@ -27,8 +38,8 @@ type Postgres struct {
 func Connection() *Postgres {
 	if singletonConnection == nil {
 		psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-			"dbname=%s sslmode=disable",
-			host, port, user, dbname)
+			"password=%s dbname=%s sslmode=disable",
+			host, port, user, password, dbname)
 
 		db, err := sql.Open("postgres", psqlInfo)
 		if err != nil {

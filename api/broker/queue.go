@@ -31,7 +31,10 @@ func randInt(min int, max int) int {
 // EvaluationRPC publishes message to process RPC
 func EvaluationRPC(id int) (res []byte, err error) {
 	// Create connection
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	// Kubernetes connection
+	conn, err := amqp.Dial("amqp://admin:hola-mama@rabbitmq:5672/")
+	// Local connection
+	// conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
