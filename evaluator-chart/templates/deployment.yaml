@@ -1,0 +1,60 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "evaluator-chart.fullname" . }}
+  labels:
+    app: {{ template "evaluator-chart.name" . }}
+    chart: {{ template "evaluator-chart.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "evaluator-chart.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "evaluator-chart.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: docker-sock-volume
+          hostPath:
+            path: /var/run/docker.sock
+        - name: evaluation-scripts
+          hostPath:
+            path: /Users/sebastianzapatamardini/go/src/github.com/Mardiniii/serapis/tmp/scripts/
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            privileged: true
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: docker-sock-volume
+            - mountPath: /scripts/
+              name: evaluation-scripts
+          env:
+            - name: DOCKER_API_VERSION
+              value: "1.35"
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
