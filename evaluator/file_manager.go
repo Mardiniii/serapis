@@ -11,7 +11,7 @@ import (
 
 func createCodeFile(lang, code string) (string, error) {
 	fileName := lang + "." + extensions[lang]
-	filePath, _ := filepath.Abs("../serapis/tmp/scripts/" + fileName)
+	filePath, _ := filepath.Abs("../scripts/" + fileName)
 
 	file, err := os.Create(filePath)
 	if err != nil {
@@ -33,7 +33,7 @@ func jsonStringToMap(raw json.RawMessage) (m map[string]string, err error) {
 func createRunFile(eval *models.Evaluation, codeFileName string) (string, error) {
 	manager := packageManagers[eval.Language]
 	fileName := "solution.sh"
-	filePath, _ := filepath.Abs("../serapis/tmp/scripts/" + fileName)
+	filePath, _ := filepath.Abs("../scripts/" + fileName)
 
 	file, err := os.Create(filePath)
 	if err != nil {
@@ -86,7 +86,7 @@ func createRunFile(eval *models.Evaluation, codeFileName string) (string, error)
 }
 
 func removeFile(fileName string) error {
-	filePath, err := filepath.Abs("../serapis/tmp/scripts/" + fileName)
+	filePath, err := filepath.Abs("../scripts/" + fileName)
 	if err != nil {
 		return err
 	}

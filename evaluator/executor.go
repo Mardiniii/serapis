@@ -45,10 +45,10 @@ func (e *executor) Start() (exitCode int, containerOutput string, err error) {
 		defer removeFile(codeFileName)
 		checkError(err)
 	}
-	cmd = []string{e.eval.Language, "/scripts/" + codeFileName}
+	cmd = []string{e.eval.Language, "scripts/" + codeFileName}
 
 	// Create a temporary file with the code to evaluate if a Git repo isn't present
-	if len(e.eval.Dependencies) > 0 || len(e.eval.Git) > 0 {
+	if string(e.eval.Dependencies) != "null" || string(e.eval.Git) != "null" {
 		// Create a temporary .sh file with the commands to install dependencies and
 		// run the code file
 		runFileName, err = createRunFile(e.eval, codeFileName)
